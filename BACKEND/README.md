@@ -1,4 +1,125 @@
-# User Registration & Login Endpoint Documentation
+# User & Captain Registration/Login Endpoint Documentation
+---
+
+## Captain Registration Endpoint
+
+### Endpoint
+
+`POST /captain/register`
+
+### Description
+Registers a new captain (driver) in the system. Validates input, checks for existing email, hashes the password, creates a new captain with vehicle details, and returns a JWT token along with the captain data (excluding the password).
+
+### Request Body
+The request body must be a JSON object with the following structure:
+
+```
+{
+  "fullname": {
+    "firstname": "<First Name>",
+    "lastname": "<Last Name>" // Optional
+  },
+  "email": "<captain@example.com>",
+  "password": "<password>",
+  "vehicle": {
+    "vehicleType": "car|bike|auto",
+    "color": "<Color>",
+    "plate": "<Plate Number>",
+    "capacity": <Number>
+  }
+}
+```
+
+#### Field Requirements
+- `fullname.firstname` (string, required): Minimum 3 characters.
+- `fullname.lastname` (string, optional): Minimum 3 characters if provided.
+- `email` (string, required): Must be a valid email address.
+- `password` (string, required): Minimum 6 characters.
+- `vehicle.vehicleType` (string, required): Must be one of `car`, `bike`, or `auto`.
+- `vehicle.color` (string, required): Minimum 3 characters.
+- `vehicle.plate` (string, required): Minimum 3 characters.
+- `vehicle.capacity` (integer, required): Must be greater than 0.
+
+### Responses
+
+#### Success
+- **Status Code:** `201 Created`
+- **Body:**
+  ```json
+  {
+    "message": "Captain registered successfully",
+    "captain": {
+      "id": "<Captain ID>",
+      "fullname": {
+        "firstname": "<First Name>",
+        "lastname": "<Last Name>"
+      },
+      "email": "<captain@example.com>",
+      "vehicle": {
+        "vehicleType": "car|bike|auto",
+        "color": "<Color>",
+        "plate": "<Plate Number>",
+        "capacity": <Number>
+      }
+    },
+    "token": "<JWT Token>"
+  }
+  ```
+
+#### Validation Error
+- **Status Code:** `400 Bad Request`
+- **Body:**
+  ```json
+  {
+    "errors": [
+      {
+        "msg": "<Validation error message>",
+        "param": "<field>",
+        "location": "body"
+      }
+      // ...more errors
+    ]
+  }
+  ```
+
+#### Duplicate Email
+- **Status Code:** `400 Bad Request`
+- **Body:**
+  ```json
+  {
+    "message": "Captain with this email already exists"
+  }
+  ```
+
+#### Other Errors
+- **Status Code:** `500 Internal Server Error`
+- **Body:**
+  ```json
+  {
+    "message": "Internal server error"
+  }
+  ```
+
+### Example Request
+```
+POST /captain/register
+Content-Type: application/json
+
+{
+  "fullname": {
+    "firstname": "Alice",
+    "lastname": "Smith"
+  },
+  "email": "alice.smith@example.com",
+  "password": "securepass123",
+  "vehicle": {
+    "vehicleType": "car",
+    "color": "Red",
+    "plate": "XYZ1234",
+    "capacity": 4
+  }
+}
+```
 
 ## Endpoint
 
