@@ -2,6 +2,220 @@
 ---
 
 ## Captain Registration Endpoint
+---
+
+## Captain Login Endpoint
+
+### Endpoint
+
+`POST /captain/login`
+
+### Description
+Authenticates a captain (driver) with email and password. Returns a JWT token and captain data (excluding the password) if credentials are valid.
+
+### Request Body
+The request body must be a JSON object with the following structure:
+
+```
+{
+  "email": "<captain@example.com>",
+  "password": "<password>"
+}
+```
+
+#### Field Requirements
+- `email` (string, required): Must be a valid email address.
+- `password` (string, required): Minimum 6 characters.
+
+### Responses
+
+#### Success
+- **Status Code:** `200 OK`
+- **Body:**
+  ```json
+  {
+    "message": "Captain logged in successfully",
+    "captain": {
+      "_id": "<Captain ID>",
+      "fullname": {
+        "firstname": "<First Name>",
+        "lastname": "<Last Name>"
+      },
+      "email": "<captain@example.com>",
+      "vehicle": {
+        "vehicleType": "car|bike|auto",
+        "color": "<Color>",
+        "plate": "<Plate Number>",
+        "capacity": <Number>
+      }
+    },
+    "token": "<JWT Token>"
+  }
+  ```
+
+#### Validation Error
+- **Status Code:** `400 Bad Request`
+- **Body:**
+  ```json
+  {
+    "errors": [
+      {
+        "msg": "<Validation error message>",
+        "param": "<field>",
+        "location": "body"
+      }
+      // ...more errors
+    ]
+  }
+  ```
+
+#### Invalid Credentials
+- **Status Code:** `404 Not Found` or `401 Unauthorized`
+- **Body:**
+  ```json
+  {
+    "message": "Invalid email or password (Captain not found)" // or "Invalid email or password"
+  }
+  ```
+
+#### Other Errors
+- **Status Code:** `500 Internal Server Error`
+- **Body:**
+  ```json
+  {
+    "message": "Internal server error"
+  }
+  ```
+
+### Example Request
+```
+POST /captain/login
+Content-Type: application/json
+
+{
+  "email": "alice.smith@example.com",
+  "password": "securepass123"
+}
+```
+
+---
+
+## Captain Profile Endpoint
+
+### Endpoint
+
+`GET /captain/profile`
+
+### Description
+Returns the authenticated captain's profile information. Requires a valid JWT token (sent as a cookie or in the `Authorization` header as `Bearer <token>`).
+
+### Authentication
+- Requires authentication via JWT token (cookie or `Authorization` header).
+
+### Responses
+
+#### Success
+- **Status Code:** `200 OK`
+- **Body:**
+  ```json
+  {
+    "_id": "<Captain ID>",
+    "fullname": {
+      "firstname": "<First Name>",
+      "lastname": "<Last Name>"
+    },
+    "email": "<captain@example.com>",
+    "vehicle": {
+      "vehicleType": "car|bike|auto",
+      "color": "<Color>",
+      "plate": "<Plate Number>",
+      "capacity": <Number>
+    }
+    // ...other captain fields (excluding password)
+  }
+  ```
+
+#### Unauthorized
+- **Status Code:** `401 Unauthorized`
+- **Body:**
+  ```json
+  {
+    "message": "Authentication token is missing" // or "Authentication token is blacklisted" or "Invalid authentication token"
+  }
+  ```
+
+#### Not Found
+- **Status Code:** `404 Not Found`
+- **Body:**
+  ```json
+  {
+    "message": "Captain not found"
+  }
+  ```
+
+#### Other Errors
+- **Status Code:** `500 Internal Server Error`
+- **Body:**
+  ```json
+  {
+    "message": "Internal server error"
+  }
+  ```
+
+### Example Request
+```
+GET /captain/profile
+Authorization: Bearer <JWT Token>
+```
+
+---
+
+## Captain Logout Endpoint
+
+### Endpoint
+
+`GET /captain/logout`
+
+### Description
+Logs out the authenticated captain by clearing the authentication cookie and blacklisting the JWT token. Requires a valid JWT token (sent as a cookie or in the `Authorization` header as `Bearer <token>`).
+
+### Authentication
+- Requires authentication via JWT token (cookie or `Authorization` header).
+
+### Responses
+
+#### Success
+- **Status Code:** `200 OK`
+- **Body:**
+  ```json
+  {
+    "message": "Captain logged out successfully"
+  }
+  ```
+
+#### Unauthorized
+- **Status Code:** `401 Unauthorized`
+- **Body:**
+  ```json
+  {
+    "message": "Authentication token is missing" // or "Authentication token is blacklisted" or "Invalid authentication token"
+  }
+  ```
+
+#### Other Errors
+- **Status Code:** `500 Internal Server Error`
+- **Body:**
+  ```json
+  {
+    "message": "Internal server error"
+  }
+  ```
+
+### Example Request
+```
+GET /captain/logout
+Authorization: Bearer <JWT Token>
+```
 
 ### Endpoint
 
