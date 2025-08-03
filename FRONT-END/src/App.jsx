@@ -6,8 +6,13 @@ import UserSignup from './pages/UserSignup'
 import CaptainLogin from './pages/CaptainLogin'
 import CaptainSignup from './pages/CaptainSignup'
 import { UserDataContext } from './context/UserContext'
-
-
+import Start from './pages/Start'
+import UserProtectWapper from './pages/UserProtectWapper'
+import UserLogout from './pages/UserLogout'
+import CaptainHome from './pages/CaptainHome'
+import CaptainProtectWapper from './pages/CaptainProtectWapper'
+import Riding from './pages/Riding'
+import CaptainRiding from './pages/CaptainRiding'
 
 
 const App = () => {
@@ -17,14 +22,34 @@ const App = () => {
   return (
     <div>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Start />} />
         <Route path="/userlogin" element={<UserLogin />} />
         <Route path="/usersignup" element={<UserSignup />} />
+        <Route path="/riding" element={<Riding />} />
+        <Route path="/captain-riding" element={<CaptainRiding />} />
         <Route path="/captainlogin" element={<CaptainLogin />} />
         <Route path="/captainsignup" element={<CaptainSignup />} />
-      </Routes>
-    </div>
+        
+        <Route path="/home" element={
+          <UserProtectWapper>
+            <Home />
+          </UserProtectWapper>
+        } />
+        <Route path="/user/logout" element={
+          <UserProtectWapper>
+            <UserLogout />
+          </UserProtectWapper>
+        } />
+        <Route path='/captain-home' element={
+          <CaptainProtectWapper>
+            <CaptainHome />
+          </CaptainProtectWapper>
+        } />
+
+      </Routes >
+    </div >
   )
 }
 
 export default App
+

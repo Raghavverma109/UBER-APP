@@ -9,12 +9,12 @@ module.exports.registerUser = async (req, res ,next) => {
     if (!errors .isEmpty()) {
         return res.status(400).json({ errors : errors .array() });
     }   
-    console.log("Registering user... and data is : ", req.body);
 
     const {fullname , email , password} = req.body;
 
     const existingUser = await USER.findOne({ email });
-    if (existingUser.length) {
+ 
+    if (existingUser) {
         return res.status(400).json({ message: 'User with this email already exists' });
     }
 
@@ -34,6 +34,8 @@ module.exports.registerUser = async (req, res ,next) => {
 }
 
 module.exports.loginUser = async (req, res, next) => {
+    console.log("Login API Hit ✅"); // 👈 Add this
+    console.log("request coming in the backend part with data : " , req.body );
     const errors  = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors : errors .array() });
@@ -58,9 +60,20 @@ module.exports.loginUser = async (req, res, next) => {
     
 }
 
-module.exports.getUserProfile = async (req, res, next) => {
-        res.status(200).json(req.user);
-}
+module.exports.getUserProfile = async (req, res) => {
+  try {
+    const user = await USER.findById(req.user._id).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("🔥 Error fetching profile:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
 
 module.exports.logoutUser = async (req, res, next) => {
     res.clearCookie('token');

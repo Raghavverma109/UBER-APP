@@ -10,8 +10,18 @@ const connectDB = require('./db/db');
 // Connect to the database
 connectDB();
 
+const corsOptions = {
+  // origin: 'http://localhost:5173',
+  // origin: 'http://192.168.1.5:5173',
+  origin: [
+    'http://localhost:5173',
+    'http://192.168.1.20:5173'
+  ],
+  credentials: true,
+};
+app.use(cors(corsOptions));
 
-app.use(cors());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -19,6 +29,11 @@ app.use(cookieParser());
 
 const userRoutes = require('./routes/user.routes');
 const captainRoutes = require('./routes/captain.routes');
+
+app.get('/user/login', (req, res) => {
+  res.send("🧪 Hardcoded route hit!");
+});
+
 
 app.get('/', (req, res) => {
   res.send('Hello World ....!');
