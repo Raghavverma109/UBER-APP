@@ -5,16 +5,92 @@ import gsap from 'gsap';
 import CaptainDetails from '../components/CaptainDetails'
 import RidePopup from '../components/RidePopup'
 import ConfirmRidePopUp from '../components/ConfirmRidePopUp';
+import MapView from './MapView';
+import { useEffect, useContext } from 'react';
+import { SocketContext } from '../context/SocketContext';
+import { CaptainDataContext } from '../context/CaptainContext';
+
 
 const CaptainHome = () => {
-
-
 
   const [ridePopUpPanel, setridePopUpPanel] = useState(true);
   const [confirmRidePopUpPanel, setConfirmRidePopUpPanel] = useState(false);
 
   const ridePopUpPanelRef = useRef(null);
   const ConfirmRidePopUpPanelRef = useRef(null);
+
+  const { socket } = useContext(SocketContext);
+  const { captain } = useContext(CaptainDataContext);
+
+  useEffect(() => {
+    // Join socket room when captain mounts
+    socket.emit('join', { userId: captain._id, userType: 'captain' });
+
+    const updateLocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          console.log("📍 Location updated:", position.coords.latitude, position.coords.longitude);
+
+          socket.emit('update-location-captain', {
+            userId: captain._id,
+            location: {
+              ltd: position.coords.latitude, // your schema uses 'ldt'
+              lng: position.coords.longitude
+            }
+          });
+        });
+      } else {
+        console.error("❌ Geolocation is not supported by this browser.");
+      }
+    };
+
+    // Run immediately on mount
+    updateLocation();
+
+    // Set interval to update every 10s
+    const locationInterval = setInterval(updateLocation, 10000);
+
+    // Cleanup interval on unmount
+    return () => {
+      clearInterval(locationInterval);
+      console.log("🧹 Cleared location update interval");
+    };
+  }, [captain._id]); // run once, and re-run if captain id changes
+  useEffect(() => {
+    // Join socket room when captain mounts
+    socket.emit('join', { userId: captain._id, userType: 'captain' });
+
+    const updateLocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          console.log("📍 Location updated:", position.coords.latitude, position.coords.longitude);
+
+          socket.emit('update-location-captain', {
+            userId: captain._id,
+            location: {
+              ltd: position.coords.latitude, // your schema uses 'ldt'
+              lng: position.coords.longitude
+            }
+          });
+        });
+      } else {
+        console.error("❌ Geolocation is not supported by this browser.");
+      }
+    };
+
+    // Run immediately on mount
+    updateLocation();
+
+    // Set interval to update every 10s
+    const locationInterval = setInterval(updateLocation, 10000);
+
+    // Cleanup interval on unmount
+    return () => {
+      clearInterval(locationInterval);
+      console.log("🧹 Cleared location update interval");
+    };
+  }, [captain._id]); // run once, and re-run if captain id changes
+
 
 
   useGSAP(function () {
@@ -52,7 +128,8 @@ const CaptainHome = () => {
         </Link>
       </div>
       <div className='h-3/5 '>
-        <img className='h-full w-full object-cover' src="https://miro.medium.com/v2/resize:fit:720/format:webp/0*gwMx05pqII5hbfmX.gif" alt="" />
+        {/* <img className='h-full w-full object-cover' src="https://miro.medium.com/v2/resize:fit:720/format:webp/0*gwMx05pqII5hbfmX.gif" alt="" /> */}
+        <MapView />
       </div>
       <div className='h-2/5 px-6 mt-10 '>
         <CaptainDetails />
@@ -61,20 +138,17 @@ const CaptainHome = () => {
 
       <div ref={ridePopUpPanelRef}
         className='fixed w-full z-10 bottom-0 bg-white translate-y-full px-3 py-6 pt-12 '>
-        <RidePopup setridePopUpPanel={setridePopUpPanel} 
-        setConfirmRidePopUpPanel={setConfirmRidePopUpPanel} 
+        <RidePopup setridePopUpPanel={setridePopUpPanel}
+          setConfirmRidePopUpPanel={setConfirmRidePopUpPanel}
         />
       </div>
       <div ref={ConfirmRidePopUpPanelRef}
         className='fixed w-full z-10 bottom-0 bg-white translate-y-full h-screen px-3 py-6 pt-12 '>
-        <ConfirmRidePopUp 
-        setConfirmRidePopUpPanel={setConfirmRidePopUpPanel}
-        setridePopUpPanel={setridePopUpPanel} />
+        <ConfirmRidePopUp
+          setConfirmRidePopUpPanel={setConfirmRidePopUpPanel}
+          setridePopUpPanel={setridePopUpPanel} />
       </div>
     </div>
-
-
-
   )
 }
 

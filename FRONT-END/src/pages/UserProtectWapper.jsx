@@ -26,8 +26,8 @@ const UserProtectWapper = ({
     .then(response => {
       if (response.status === 200) {
         console.log("User profile fetched ✅", response.data);
-        setUser(response.data)
-        setIsLoading(false)
+        setUser(response.data);
+        setIsLoading(false);
       }
     })
       .catch(err => {

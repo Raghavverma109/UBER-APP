@@ -38,7 +38,7 @@ const LookingForDriver = (props) => {
                         <i className="ri-map-pin-2-fill"></i>
                         <div>
                             <h3 className='text-xl font-extrabold'>562/11-A</h3>
-                            <p className='text-base -mt-1 text-gray-600'>Kankariya Talab, Delhi</p>
+                            <p className='text-base -mt-1 text-gray-600'>{props.pickup}</p>
                         </div>
                     </div>
                     <hr className='border-gray-300 my-4 ml-9 ' />
@@ -46,14 +46,14 @@ const LookingForDriver = (props) => {
                         <i className="ri-focus-fill"></i>
                         <div>
                             <h3 className='text-xl font-extrabold'>Third Wave Coffee </h3>
-                            <p className='text-base -mt-1 text-gray-600'>17th Cross Rd, PWD Quarters, Noida, UttarPradesh</p>
+                            <p className='text-base -mt-1 text-gray-600'>{props.destination}</p>
                         </div>
                     </div>
                     <hr className='border-gray-300 my-4 ml-9' />
                     <div className='flex items-center gap-5'>
                         <i className="ri-currency-line"></i>
                         <div>
-                            <h3 className='text-xl font-extrabold'>₹ 193.46</h3>
+                            <h3 className='text-xl font-extrabold'>₹ {props.fare[props.vehicleType]}</h3>
                             <p className='text-base -mt-1 text-gray-600'>Cash Cash</p>
                         </div>
                     </div>
